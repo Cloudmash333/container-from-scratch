@@ -1,0 +1,85 @@
+Hello everyone. So today we will learn how can we create our custom container using only Linux command and without using docker. All the code files which are used in this part project are provided in this GitHub repository and link this GitHub repository is provided in the description. So let's start. So first of all for a container we will be needing our one custom file system. So what we are going to do today is create a NodeJS application or create a separate name spaces for that and provide a separate croups functionality to that particular application. So for that we have to have one like bootstrap file system on which we can run our application. Like here you can run this particular command debootstrap. So what is debootstrap? Debootstrap is a system which can provide you for a starting file system like in our my case I have already installed it. So let's create my starting file system like I will be using these particular command via this file because if I just type it out it will be boring for you. So okay it can be only run via root and also it will be need it will be needing a directory. So let's create a directory and run it via sudo.
+
+So it will retrieve all the necessary dependencies which are necessary for creating your file system.
+
+So it has installed a Debian system on my system. So like here if we can see like my own system OS release is Ubuntu 24 LPS. Although the container which we have downloaded, no not the container, the file system which we have downloaded has this particular OS release
+
+see Linux. So what we actually have done we have created a starting file system which has its own binaries and own libraries. So here we can pack on with our custom code and run it like uh if I do the root
+
+like root dot / containers.
+
+So I have now jailed my file system to this particular file system. Whatever I execute here will be executed on these particular files. But I will be needing other processes like process ids. Okay, we don't have process here up till now. So maybe as you can see in these particular binaries it's the bootstrap file system. It doesn't have PS or it doesn't have functions like ping in it. So we have to install these things in it. So what we are installing? We are installing IP utilities ping to check network connection. We are installing procs for checking processes. We are installing nano editor, NodeJS and IP routes. So why IP route it's needed? You will be able to know further down the video.
+
+I believe it has 1 S.
+
+So in our ter all the utilities are installed like now ping is also recognizable.
+
+See, so let's go ahead and make this particular thing in a separate name space. So let's run it in a separate name space. So for that we will run sudo unshare. We will create a separate mount for it. Separate process ID name space separate user host name network
+
+C group and what else we can do for the process binary bash.
+
+So yes, so here we are now in a separate name space. So let's try running ping v3 package to our google.com. So now it says temporary failure in name resolution. So what basically it has done it has given us a separate network name space but our network name space is not connected to the internet. So to connect it to the internet we have to run following script
+
+like for that we will create a separate network name space. So let me explain you about it little bit. we will create a separate network name space named my network name space. So after that we will create two vat pairs. One will be named as system at which will be remain which will remain on our host side and another will will be named as container at and which will remain on our network main page side and we will allot IP addresses 10.0.1 to our system at and we will allot IP address 10.0.2 to our container side v pair. So these V at pairs we have created so that our isolated system can have a communication when we do cherout because whenever we do unshare net all the network capability get lost to our nameace because we don't have any connection. So for that we need to run my network name space like here we can do like these commands are used. First we will create a network name space. After that we will create a V pair called systemat and container at. So V pairs pairs are comm created in pairs only. So after that we will set container at pair on the my network name space side like we have this particular point that be at pair is allotted to network name space container at with container at name.
+
+So to this part was done. After that IP address was allotted. System at has got 10.0.1 and it is set to up and container at has got 10.0.2 and then it is set to up. We have also set up the loop back interface of my network name space and then we have enabled the IPv4 packet forwarding in our host like these particular settings in within your host. You can revert by an another file which are provided which is provided in the repository. And after that we will create a net rule by which the routing has happened between like you can see this rule here. Here actually whenever our network namespace will try to route any packet from its network it will go via our system at name space like this 10.0.0.1 is the IP allotted to system at pair like here. So we have added a route by which it will use this one. Like here basically suppose there is one particular data packet packet one as is generated here. So it will go through 10.0.1 0.1 to the internet because here this setting we have added
+
+like here we have added this particular setting.
+
+Okay. So after that we are just checking uh like whether a ping is working. This 8.8.8 is a name server like it's a universal name server. which is used for resolution. So that's what all is done by create network. Let's move forward.
+
+So we will do bash create network.sh.
+
+So it is forwarding IPS uh IP packets. So here let us just go out and then and then run this command. After that we will go inside our network name space. So it can be done sudo IB network name space execute my network name space it's a root to our file system.
+
+So now let's try ping.
+
+So now our ping is working fine. Let's try ping to unnamed DNS.
+
+Okay. See so it is unable to resol. So if we can see in our cher root whether we have any resolve doconfig
+
+ro do config. Okay we do have so nano etc doconfig. So it seem it is copied from the base file system. So we will remove all this content and give it a name server.
+
+So now let's try
+
+see after giving name server it is able to resolve we have uh transported three packets of to google.com and it worked fine. So now our like cherut system is able to do the the communication with outside world and also like we have uh created it using unshare process ID. So processes must be uh like different here. But here some more things are remaining like let's do some more mounts.
+
+So here we will mount type proc to a virtual interface rock and mount it to process. So by that we got our separate processes in our uh isolated container. In same way run other statement for system files.
+
+mount temporary file system file system.
+
+So now all the things are mounted. Let's create our application. Like here we have one application called server.js. Let's copy it.
+
+We have downloaded a nano editor.
+
+So what it is doing? It is just sending this particular hello. This response is from container to port 3000.
+
+So before that before running this photo application let me show you one thing in network interfaces you can see it has one loop back interface and container at pair is here which have IP 10.0.2 to allot it like I have shown you in this particular script like I would have typed these all commands in front of you but then the video would have become boring so I have created a script already for this. So here we have attached this particular IP address to our container at vat pair. So as we can see in our separate container in network interfaces we have this particular IP available and likewise in our local we have
+
+the other pair like this one system at this system at and this particular container at are connected and this particular IP is using this as router to route packets. So let's run our server node server.js. So our server is running. Let's do curve.
+
+See it's worked. Hello. This is respond from container. So our host system is able to connect to our container. So now what last thing is left we have to allot this croups to our this particular container. For that let's see what are different processes running like I will see for my network name space that I have just created. So this one is the pseudo process first one. Second one is the acture my network name space process and this one is the grab command process. So this 11 to 87 is basically my process. So let's see uh list processes 11 to87. Okay. So as we can see we have croup here. Let's see what exact croup it is currently using. Like if the terms I'm saying here are like not familiar to you, please go and watch the previous lecture in this series.
+
+So here our process network process is currently using this particular C C group. So now we will modify it so that it will use another C groupoup with our pre-allotted CPU and memory.
+
+So let's go to system file system C group. So here we have different C group. Let's make my C group.
+
+So my C group is created.
+
+So now I will modify like from now on this part is quite like uh dangerous I will say uh whatever commands you type here there are also revert command given in the repo. So please follow that because this particular thing can change your whole system setting.
+
+Let's run this per command. What this per command does is it will provide you capability to modify CPU also in your C groupoup. So it's done.
+
+So we have modified our C groupoup to use this particular CPU and memory. And from now like we can see we have one file name Cgroup props here like this particular croup prop file we can add the ID of the process to which we have to allot this particular C group. So let's go and do nano cgroup dot procs. And what was the ID? ID was 11 to87. Run it by this
+
+11 to87. Okay.
+
+So yeah now these particular croup settings like CPU max limit to 50% and uh some these particular number of bytes to the memory is allotted to our process number 11 to87. So let's see how much uh croup like which part Couproup now this process is using. So now this process is using our own my croup that we have just created here. And here we have specified like in C groupoup CPU max and memory max like this particular CPU and memory this container can use. So by this our and also we can recheck the capabil like whether it is running currently or not. It is still currently running very fine. So by this we are able to create a container which has separate name space, separate network nameace and separate croups. So now uh we have created so much different setting within our Linux system. So that's why I will advise you to use a different virtual machine for this task. So that if anything goes wrong like your major operating system should not have any issue but still uh let's go and revert the changes that we have done. So first of all let's skip this process. Exit exit. Now our network name space
+
+process is killed. Okay it is killed and my C groupoup we have to delete. Before that we can do these particular settings
+
+and at last we will remove this particular C group directory.
+
+So our C groupoup changes are reverted and at last we will also revert the network name space changes. So we will run dash delete network
+
+name space. So our all settings are reverted now. So that's how we can run our own custom container in Linux like you can rewatch this video again and again and this time I have kept video length very small because previously I have received feedback that my video was very long like my case for that was like maybe for a person watching my video it this these things can be new so like I can keep small pace but YouTube works differently. It works on the number of time the percentage of time your video is watched. So that's why I have kind of uh kept my pace high this time and not uh like taken a slow pace. So yeah that's all. Uh if you have any doubt regarding this please comment down below.
