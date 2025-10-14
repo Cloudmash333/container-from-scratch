@@ -2,7 +2,7 @@
 
 ```bash
 sudo apt install debootstrap
-
+mkdir containers
 debootstrap --variant=minbase stable ./containers http://deb.debian.org/debian/
 # Setup Network Namespace
 # Copy or create your server.js file
