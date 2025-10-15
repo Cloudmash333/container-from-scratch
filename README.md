@@ -9,7 +9,9 @@ Please use a Virtual Ubuntu or any other linux for this tutorial, as leaving ste
 sudo bash create_network.sh
 # create your own server.js file or any application , and run it inside the newly created container
 sudo bash make_container.sh
-Get process id of the 2nd network namespce process my ps aux | grep "mynetworkns" 
+
+Get process id of the 2nd network namespce process my ps aux | grep "mynetworkns"  , and run below command
+
 sudo bash attach_cgroup.sh
 # To revert 
 sudo bash revert.sh  
