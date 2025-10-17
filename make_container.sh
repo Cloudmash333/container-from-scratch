@@ -9,7 +9,7 @@ debootstrap --variant=minbase stable ./containers http://deb.debian.org/debian/
 # Start the network namespace
 bash create_network.sh
 # Enter the Container Namespace
-sudo unshare --mount --pid --uts --net --cgroup --fork /bin/bash
+sudo unshare --mount --pid --uts --net --ipc --cgroup --fork /bin/bash
 
 sudo ip netns exec mynetworkns chroot ./containers /bin/bash
 # Fix DNS and Hostname
